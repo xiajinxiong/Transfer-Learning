@@ -121,9 +121,9 @@ def test():
     print("sst acc=", sst_acc, 'mr_acc=', mr_acc, 'cr_acc=', cr_acc, 'all_acc=', all_acc)
     global best_all_acc
     if all_acc > best_all_acc:
-        torch.save(model.state_dict(), "/home/hadoop-mtai/cephfs/data/xiajinxiong/workspace/Transfer/saved_model"
+        torch.save(model.state_dict(), "/home/tanghaihong/workspace/saved_model/Transfer-Learning"
                                        "/cross_task_roberta.pt", _use_new_zipfile_serialization=False)
-        print("saving p-tuning-v2 to /home/hadoop-mtai/cephfs/data/xiajinxiong/workspace/Transfer/saved_model"
+        print("saving model to /home/tanghaihong/workspace/saved_model/Transfer-Learning"
               "/cross_task_roberta.pt")
         best_all_acc = all_acc
 
@@ -154,33 +154,33 @@ test_batch_size = 64
 gpu_num = 0
 n_epochs = 30
 device = torch.device("cuda:" + str(gpu_num))
-model_name = "/home/hadoop-mtai/cephfs/data/xiajinxiong/workspace/huggingface/roberta-base"
-print("Loading p-tuning-v2")
+model_name = "roberta-base"
+print("Loading model")
 config = RobertaConfig.from_pretrained(model_name)
 model = Model()
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-5)
 optimizer_to(optimizer, device)
 loss_fn = nn.CrossEntropyLoss()
 print("Loading data")
-sst_train_df = pd.read_csv("/home/hadoop-mtai/cephfs/data/xiajinxiong/workspace/"
-                           "LM-BFF/data/original/SST-2/train.tsv", sep="\t")
-sst_dev_df = pd.read_csv("/home/hadoop-mtai/cephfs/data/xiajinxiong/workspace/"
-                         "LM-BFF/data/original/SST-2/dev.tsv", sep="\t")
-sst_test_df = pd.read_csv("/home/hadoop-mtai/cephfs/data/xiajinxiong/workspace/"
-                          "LM-BFF/data/original/SST-2/test-labeled.tsv", sep="\t")
-mr_train_df = pd.read_csv("/home/hadoop-mtai/cephfs/data/xiajinxiong/workspace/"
-                          "LM-BFF/data/original/mr/train.csv")
-mr_test_df = pd.read_csv("/home/hadoop-mtai/cephfs/data/xiajinxiong/workspace/"
-                         "LM-BFF/data/original/mr/test.csv")
-cr_train_df = pd.read_csv("/home/hadoop-mtai/cephfs/data/xiajinxiong/workspace/"
-                          "LM-BFF/data/original/cr/train.csv")
-cr_test_df = pd.read_csv("/home/hadoop-mtai/cephfs/data/xiajinxiong/workspace/"
-                         "LM-BFF/data/original/cr/test.csv")
+sst_train_df = pd.read_csv("/home/tanghaihong/workspace/"
+                           "original/SST-2/train.tsv", sep="\t")
+sst_dev_df = pd.read_csv("/home/tanghaihong/workspace/"
+                         "original/SST-2/dev.tsv", sep="\t")
+sst_test_df = pd.read_csv("/home/tanghaihong/workspace/"
+                          "original/SST-2/test.tsv", sep="\t")
+mr_train_df = pd.read_csv("/home/tanghaihong/workspace/"
+                          "original/mr/train.csv", sep=",")
+mr_test_df = pd.read_csv("/home/tanghaihong/workspace/"
+                         "original/mr/test.csv", sep=",")
+cr_train_df = pd.read_csv("/home/tanghaihong/workspace/"
+                          "original/cr/train.csv", sep=",")
+cr_test_df = pd.read_csv("/home/tanghaihong/workspace/"
+                         "original/cr/test.csv", sep=",")
 print("Tokenizing data")
 tokenizer = RobertaTokenizer.from_pretrained(model_name)
 sst_train_list = tokenize(tokenizer, sst_train_df, label_first=False)
 sst_dev_list = tokenize(tokenizer, sst_dev_df, label_first=False)
-sst_test_list = tokenize(tokenizer, sst_test_df, label_first=False)
+sst_test_list = tokenize(tokenizer, sst_test_df, label_first=True)
 mr_train_list = tokenize(tokenizer, mr_train_df)
 mr_test_list = tokenize(tokenizer, mr_test_df)
 cr_train_list = tokenize(tokenizer, cr_train_df)
